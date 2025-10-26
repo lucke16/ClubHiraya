@@ -231,11 +231,11 @@ body {
 .table-icon img { width: 15px; margin-left: 7px; position: relative; top: 1px; }
 
 /* Layout */
-.content-area {
-    display: flex;
-    gap: 15px;
-    padding: 17px 10px 0 50px;
-}
+/*.content-area {*/
+/*    display: flex;*/
+/*    gap: 15px;*/
+/*    padding: 17px 10px 0 50px;*/
+/*}*/
 
 /* Products area */
 .products-section {
@@ -317,6 +317,7 @@ body {
     padding: 6px 6px 6px 6px;
     max-height: 790px;
     padding-right: 4px;
+    padding-left: 50px;
 }
 
 /* Food card */
@@ -595,4 +596,115 @@ body {
 .foods-grid::-webkit-scrollbar-thumb, .order-list::-webkit-scrollbar-thumb {
     background: #dcdcdc;
     border-radius: 6px;
+}
+/* --- FIXED LAYOUT ADJUSTMENTS ---
+   Make Topbar, Category Tabs and Order Section fixed.
+   Append this to the end of css/style.css
+*/
+/* === FIX: topbar, category-tabs, order-section (append to css/style.css) === */
+:root{
+  --sidebar-width: 150px;   /* matches your sidebar width */
+  --topbar-height: 52px;    /* matches your topbar height */
+  --order-width: 360px;     /* change if your order panel width is different */
+  --category-height: 56px;  /* approx height of category tabs row */
+  --gutter: 16px;
+}
+
+/* Keep topbar fixed and not overlapping the order panel */
+.topbar{
+  position: fixed;
+  left: var(--sidebar-width);
+  right: var(--order-width);
+  top: 0;
+  height: var(--topbar-height);
+  z-index: 1200;
+}
+
+/* Fix category tabs under topbar but DO NOT extend into the order panel */
+.category-tabs{
+  position: fixed;
+  left: calc(var(--sidebar-width) + var(--gutter));
+  /* stop tabs before the order panel so they don't draw over it */
+  right: calc(var(--order-width) + var(--gutter));
+  top: calc(var(--topbar-height) + 10px);
+  height: var(--category-height);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  z-index: 1150;
+  background: transparent; /* transparent so it won't create a white bar over the order panel */
+}
+
+/* Ensure the products area doesn't get covered by the fixed order panel or category-tabs */
+.products-section{
+  /* leave enough right margin so grid/cards never go under the order panel */
+  margin-right: calc(var(--order-width) + 28px);
+  /* push content down to clear the fixed topbar + category tabs */
+  padding-top: calc(var(--topbar-height) + var(--category-height) + 18px);
+  min-width: 0; /* allow flex shrink */
+  box-sizing: border-box;
+}
+
+/* Add a little right padding in the grid so the last card is fully visible */
+.foods-grid{
+  padding-right: 12px;
+  box-sizing: border-box;
+}
+
+/* Fixed order section: single size/height (viewport minus topbar), internal scroll for list */
+.order-section{
+  position: fixed;
+  right: 0;
+  top: var(--topbar-height);
+  width: var(--order-width);
+  height: calc(100vh - var(--topbar-height));
+  overflow: hidden; /* inner .order-list will scroll */
+  z-index: 1190;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+/* Make the order-list scrollable inside the fixed panel */
+.order-list{
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* keep compute & buttons pinned inside panel */
+.order-compute, .order-buttons {
+  flex: 0 0 auto;
+}
+
+/* MOBILE: convert order panel into a bottom sheet and remove large right margin */
+@media (max-width: 900px) {
+  :root { --order-width: 100%; }
+
+  .topbar { left: 0; right: 0; }
+
+  .category-tabs {
+    left: 12px;
+    right: 12px;
+    top: calc(var(--topbar-height) + 8px);
+    background: rgba(255,255,255,0.98);
+  }
+
+  .order-section{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    height: 48vh; /* mobile fixed height - change if desired */
+    width: 100%;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.12);
+  }
+
+  .products-section {
+    margin-right: 0;
+    padding-bottom: calc(48vh + 18px); /* prevent content behind bottom sheet */
+    padding-top: calc(var(--topbar-height) + var(--category-height) + 18px);
+  }
 }

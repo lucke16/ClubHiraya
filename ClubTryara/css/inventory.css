@@ -24,17 +24,21 @@ body {
   padding-top: 8px;
   overflow: hidden; /* prevent overflowing large images */
 }
-.sidebar-header {
-    width: 100%;
-    padding: 16px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 .sidebar-header-img {
-    width: 120px; /* logo size */
-    height: auto;
-    object-fit: contain;
+  width: 86px;      /* desired logo width */
+  height: 86px;     /* desired logo height */
+  object-fit: contain;
+  display: block;
+  max-width: 86px;
+  max-height: 86px;
+}
+
+/* Ensure no img inside sidebar exceeds container bounds */
+.sidebar img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  pointer-events: none;
 }
 
 /* Ensure no img inside sidebar exceeds container bounds */
@@ -370,4 +374,33 @@ body {
 @media (max-width: 900px) {
   .header-actions { margin-right: 100px; }
   .add-btn { right: 18px; padding: 8px 14px; }
+}
+/* --- FIXED LAYOUT ADJUSTMENTS FOR INVENTORY PAGE ---
+   Make Topbar, Category Tabs (if present) and Order Section fixed.
+   Append this to the end of css/inventory.css
+*/
+:root{
+  --sidebar-width: 150px;   /* match your .sidebar width */
+  --topbar-height: 52px;    /* match your .topbar height */
+  --order-width: 360px;     /* desired fixed order panel width (change as needed) */
+}
+
+/* Fix the topbar on the inventory page */
+.topbar {
+  position: fixed;
+  left: var(--sidebar-width);
+  right: 0;
+  top: 0;
+  height: var(--topbar-height);
+  z-index: 1200;
+}
+
+/* Ensure inventory content is pushed below the fixed topbar */
+.inventory-container {
+  padding-top: calc(var(--topbar-height) + 14px);
+}
+/* Responsive: mobile fallback */
+@media (max-width: 900px) {
+  .topbar { left: 0; right: 0; }
+  .inventory-container { padding-bottom: calc(48vh + 18px); }
 }
